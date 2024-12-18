@@ -2,6 +2,7 @@
 # Program: SnakeClone
 import time
 import random
+from turtle import left, right
 import pygame
 import sys
 
@@ -17,7 +18,6 @@ WINDOW_HEIGHT = 400
 CELL_SIZE = 20
 assert WINDOW_WIDTH % CELL_SIZE == 0,  "cell size must divide WINDOW_WIDTH"
 assert WINDOW_HEIGHT % CELL_SIZE == 0,  "cell size must divide WINDOW_HEIGHT"
-
 CELL_WIDTH = int(WINDOW_WIDTH / CELL_SIZE)
 CELL_HEIGHT = int(WINDOW_HEIGHT / CELL_SIZE)
 
@@ -53,7 +53,7 @@ def main():
 def showStartScreen():
     print("Start the Snake Game!!!")
                             # Hover over render to see what the params mean
-    instText = BASIC_FONT.render("Use wasd or Arrows to turn.", False, RED, BLACK)
+    instText = BASIC_FONT.render("Use wasd or Arrows to turn.", True, RED, BLACK)
     startText = BASIC_FONT.render("Press Any key to start", True, GREEN, BLACK)
     DISPLAY_SURF.fill(BLACK)
     DISPLAY_SURF.blit(instText, (WINDOW_WIDTH/10, WINDOW_HEIGHT//8))
@@ -123,6 +123,8 @@ def showGameOverScreen():
                 if event.key == K_ESCAPE:  
                     terminate()
                 # Improve to start game again...
+                return
+            
 
 
 def getRandomLocation(snakeCoords):
@@ -132,14 +134,19 @@ def getRandomLocation(snakeCoords):
     # needs to be improved to prevent spawning on top of snake
 
     return (x, y)
-
+def drawScore(score):
+    score = str(score)
+    textScore = BASIC_FONT.render(score, True, WHITE, BLACK)
+    DISPLAY_SURF.blit(textScore, (WINDOW_WIDTH/10, WINDOW_HEIGHT/20))
+    pygame.display.update()
 def runGame():
     startX = CELL_WIDTH // 2
     startY = CELL_HEIGHT // 2
     snakeCoords = [(startX, startY)]
     direction = random.choice([RIGHT, LEFT, UP, DOWN])
     apple = getRandomLocation(snakeCoords)  # to be implemented
-    
+    score = 1
+    frame = 0
     # Event handling loop
     while True: 
         ## CHECK FOR USER INPUT ##
@@ -147,13 +154,13 @@ def runGame():
             if event.type == QUIT:  
                 terminate()   # to be implemented pygame.quit() then sys.exit()
             elif event.type == KEYDOWN: 
-                if (event.key == K_LEFT or event.key == K_a): 
+                if direction != RIGHT and(event.key == K_LEFT or event.key == K_a): 
                     direction = LEFT  
-                elif (event.key == K_RIGHT or event.key == K_d):  
+                elif direction != LEFT and(event.key == K_RIGHT or event.key == K_d):  
                     direction = RIGHT  
-                elif (event.key == K_UP or event.key == K_w):  
+                elif direction != DOWN and(event.key == K_UP or event.key == K_w):  
                     direction = UP  
-                elif (event.key == K_DOWN or event.key == K_s):  
+                elif direction != UP and(event.key == K_DOWN or event.key == K_s):  
                     direction = DOWN 
                 elif event.key == K_ESCAPE:  
                     terminate()
@@ -175,7 +182,20 @@ def runGame():
         snakeCoords.insert(0,newHead)
         # Check for collision If the snake collides what should it do
         #       What is it colliding with ?
+        #checks if hits borders
+        if snakeCoords[HEAD][X] >= CELL_WIDTH or snakeCoords[HEAD][X] <= 0 or snakeCoords[HEAD][Y] <= 0 or snakeCoords[HEAD][Y]  >= CELL_HEIGHT:
+            return
 
+        # checks if hits self
+        elif snakeCoords[HEAD] in snakeCoords[1:]:
+            return
+
+        #check for apple collision
+        elif snakeCoords[HEAD] ==apple:
+            apple= getRandomLocation(snakeCoords)
+            score+=1
+        else:
+            snakeCoords.pop(score)        
         
         
         ## ~~~~~End of Logic Section~~~ ##
@@ -186,10 +206,12 @@ def runGame():
         drawGrid()
         drawSnake(snakeCoords)
         drawApple(apple)
-        # drawScore 
+        drawScore(score)
         
+        # if frame % 3 == 0: 
         pygame.display.update()
         FPS_CLOCK.tick(FPS)
+
 
 
 
