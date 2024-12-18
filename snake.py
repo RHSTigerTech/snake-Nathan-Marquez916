@@ -183,7 +183,7 @@ def runGame():
         # Check for collision If the snake collides what should it do
         #       What is it colliding with ?
         #checks if hits borders
-        if snakeCoords[HEAD][X]> CELL_WIDTH or snakeCoords[HEAD][X] < 0 or snakeCoords[HEAD][Y] < 0 or snakeCoords[HEAD][Y]> CELL_HEIGHT:
+        if snakeCoords[HEAD][X] >= CELL_WIDTH or snakeCoords[HEAD][X] <= 0 or snakeCoords[HEAD][Y] <= 0 or snakeCoords[HEAD][Y]  >= CELL_HEIGHT:
             return
 
         # checks if hits self
@@ -211,8 +211,6 @@ def runGame():
         # if frame % 3 == 0: 
         pygame.display.update()
         FPS_CLOCK.tick(FPS)
-        frame += 1
-        frame %= 3
 
 
 
