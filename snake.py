@@ -18,7 +18,6 @@ WINDOW_HEIGHT = 400
 CELL_SIZE = 20
 assert WINDOW_WIDTH % CELL_SIZE == 0,  "cell size must divide WINDOW_WIDTH"
 assert WINDOW_HEIGHT % CELL_SIZE == 0,  "cell size must divide WINDOW_HEIGHT"
-
 CELL_WIDTH = int(WINDOW_WIDTH / CELL_SIZE)
 CELL_HEIGHT = int(WINDOW_HEIGHT / CELL_SIZE)
 
@@ -135,7 +134,11 @@ def getRandomLocation(snakeCoords):
     # needs to be improved to prevent spawning on top of snake
 
     return (x, y)
-
+def drawScore(score):
+    score = str(score)
+    textScore = BASIC_FONT.render(score, True, WHITE, BLACK)
+    DISPLAY_SURF.blit(textScore, (WINDOW_WIDTH/10, WINDOW_HEIGHT/20))
+    pygame.display.update()
 def runGame():
     startX = CELL_WIDTH // 2
     startY = CELL_HEIGHT // 2
@@ -143,6 +146,7 @@ def runGame():
     direction = random.choice([RIGHT, LEFT, UP, DOWN])
     apple = getRandomLocation(snakeCoords)  # to be implemented
     score = 1
+    frame = 0
     # Event handling loop
     while True: 
         ## CHECK FOR USER INPUT ##
@@ -202,10 +206,14 @@ def runGame():
         drawGrid()
         drawSnake(snakeCoords)
         drawApple(apple)
-        # drawScore 
+        drawScore(score)
         
+        # if frame % 3 == 0: 
         pygame.display.update()
         FPS_CLOCK.tick(FPS)
+        frame += 1
+        frame %= 3
+
 
 
 
